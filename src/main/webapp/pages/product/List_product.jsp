@@ -8,42 +8,17 @@
 
 <body>
 <table>
-<li><a href = "/ReadAllProductSearch">SearchProduct</a> ||
-<li><a href = "/shopping_cart">ShoppingCart</a> ||
-<a href = "/pages/product/ReadProduct.jsp">Buy_A_Product</a> ||
-
-<li><a href = "/ProductSortingName"> Sort_by_name(a-z)</a> ||
-<a href = "/ProductSorting">Sort_by_name(z-a)</a> ||
-
-<a href = "/ProductSortingPrice">Sort_by_price(0-9)
-<input type="hidden" name="button" value="button1"/></a> ||
-
-<a href = "/ProductSorting">Sort_by_price(9-0)</a> ||
 <thead>
-<tr>
-<form action ="/ReadProductFromBefore" method= "GET">
-<td>
-<input type ="text" name = "from" placeholder ="from">
-<input type ="text" name = "before" placeholder ="before">
-<input type ="submit" value = "ok">
-</td>
-
-<tr>
 <th>id</th>
-<th>product</th>
-<th>model</th>
+<th>name</th>
 <th>price</th>
 <th>amount</th>
+<th>sum</th>
 </tr>
 </thead>
 <tbody>
-
-
-
-
 <form action ="/readAllProduct" method= "GET">
 <c:forEach var = "product" items = "${products}">
-
 <tr>
 <td>
 ${product.id}
@@ -54,10 +29,6 @@ ${product.product.name}
 </td>
 
 <td>
-${product.model}
-</td>
-
-<td>
 ${product.price}
 </td>
 
@@ -65,6 +36,9 @@ ${product.price}
 ${product.amount}
 </td>
 
+<td>
+${product.sum}
+</td>
 
 </tr>
 </c:forEach>

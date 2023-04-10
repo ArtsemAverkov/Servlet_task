@@ -12,13 +12,10 @@
 <form action ="/delete" method= "GET">
 <tr>
 <div class="form-floating">
-<input type ="text" name = "name" placeholder ="name">
-<label for="floatingInput">Name</label>
+<input type ="text" name = "id" placeholder ="id">
+<label for="floatingInput">Id</label>
 </td>
-<div class="form-floating">
-<input type ="text" name = "model" placeholder ="model">
-<label for="floatingInput">Model</label>
-</td>
+
 <td>
 <input type ="submit" value = "delete">
 </td>

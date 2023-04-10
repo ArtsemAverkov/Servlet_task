@@ -17,8 +17,8 @@
 </div>
 
 <div class="form-floating">
-<input type ="text" name = "model" placeholder ="model">
-<label for="floatingInput">Model</label>
+<input type ="text" name = "isDiscount" placeholder ="isDiscount">
+<label for="floatingInput">IsDiscount</label>
 </td>
 
 <div class="form-floating">

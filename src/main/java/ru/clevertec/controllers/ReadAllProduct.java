@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.data.domain.Pageable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +35,7 @@ public class ReadAllProduct extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         final RequestDispatcher requestDispatcher = req.getRequestDispatcher(PRODUCT_PAGE);
-        List<Product> products = modelProductService.readAll(Pageable.ofSize(0).withPage(0));
-
+        List<Product> products = modelProductService.readAll(1, 20);
         logger.info("ReadAllProduct :" + products);
          req.setAttribute("product", products);
         requestDispatcher.forward(req,resp);

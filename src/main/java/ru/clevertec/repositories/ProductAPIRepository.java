@@ -7,8 +7,6 @@ import ru.clevertec.util.JPAUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,14 +22,12 @@ public class ProductAPIRepository implements ProductsRepository<Product> {
         EntityManager entityManager = jpa.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        Query query = entityManager.createQuery("create ModelProduct (Model= :model " +
-                "and Price = :price and Amount= : amount)");
+        Query query = entityManager.createQuery("create Product (name= :name " +
+                "and price = :price and amount= : amount and isDiscount= :isDiscount)");
         query.setParameter("name", product.getName());
         query.setParameter("price",product.getPrice());
         query.setParameter("amount", product.getAmount());
         query.setParameter("isDiscount", product.isDiscount());
-//        List<Product> queryResultList = query.getResultList();
-//        entityManager.persist(queryResultList);
         transaction.commit();
         return true;
     }
@@ -42,7 +38,7 @@ public class ProductAPIRepository implements ProductsRepository<Product> {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         Query query = entityManager.createQuery
-                ("select id from ModelProduct where id= :id");
+                ("select id from Product where id= :id");
         query.setParameter("id", id);
         List<Product> resultList = query.getResultList();
         resultList.forEach(System.out::println);
@@ -57,17 +53,13 @@ public class ProductAPIRepository implements ProductsRepository<Product> {
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         Query query = entityManager.createQuery(
-                "update ModelProduct set name= :name and price= :price and amount= :amount where " +
+                "update Product set name= :name and price= :price and amount= :amount where " +
                 "id = :id");
         query.setParameter("id",id);
         query.setParameter("name", product.getName());
         query.setParameter("price", product.getPrice());
         query.setParameter("amount", product.getAmount());
-
-//        List<Product> queryResultList = query.getResultList();
-//        entityManager.persist(queryResultList);
         transaction.commit();
-
         return true;
     }
 
@@ -76,7 +68,7 @@ public class ProductAPIRepository implements ProductsRepository<Product> {
         EntityManager entityManager = jpa.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        Query query = entityManager.createQuery("delete ModelProduct where id= :id");
+        Query query = entityManager.createQuery("delete Product where id= :id");
         query.setParameter("id", id);
         List queryResultList = query.getResultList();
         queryResultList.forEach(System.out::println);
@@ -86,13 +78,15 @@ public class ProductAPIRepository implements ProductsRepository<Product> {
     }
 
     @Override
-    public List<Product> readAll(Pageable pageable) {
+    public List<Product> readAll(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
         EntityManager entityManager = jpa.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        TypedQuery<Product> query = entityManager.createQuery
-                ("select m from ModelProduct as m join fetch m.product", Product.class);
-        List<Product> resultList = query.getResultList();
+        Query query = entityManager.createQuery("SELECT * FROM Product LIMIT ?, ?");
+        query.setParameter(1, offset);
+        query.setParameter(2, pageSize);
+        List resultList = query.getResultList();
         transaction.commit();
         return resultList;
     }

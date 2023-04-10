@@ -16,14 +16,20 @@
 <tbody>
 <form action ="/updateProduct" method= "GET">
 <tr>
+
+<div class="form-floating">
+<input type ="text" name = "id" placeholder ="id">
+<label for="floatingInput">Id</label>
+</div>
+
 <div class="form-floating">
 <input type ="text" name = "name" placeholder ="name">
 <label for="floatingInput">Name</label>
 </div>
 
 <div class="form-floating">
-<input type ="text" name = "model" placeholder ="model">
-<label for="floatingInput">Model</label>
+<input type ="text" name = "isDiscount" placeholder ="isDiscount">
+<label for="floatingInput">IsDiscount</label>
 </div>
 <div class="form-floating">
 <input type ="text" name = "price" placeholder ="price">
@@ -34,26 +40,6 @@
 <input type ="text" name = "amount" placeholder ="amount">
 <label for="floatingInput">Amount</label>
 </div>
-
-<div class="form-floating">
-<input type ="text" name = "newName" placeholder ="newName">
-<label for="floatingInput">NewName</label>
-</div>
-<div class="form-floating">
-<input type ="text" name = "newModel" placeholder ="newModel">
-<label for="floatingInput">NewModel</label>
-</div>
-<div class="form-floating">
-<input type ="text" name = "newPrice" placeholder ="newPrice">
-<label for="floatingInput">NewPrice</label>
-</div>
-
-<div class="form-floating">
-<input type ="text" name = "newAmount" placeholder ="newAmount">
-<label for="floatingInput">NewAmount</label>
-</div>
-
-
 
 <td>
 <input type ="submit" value = "update"></td>
