@@ -20,12 +20,10 @@ import java.util.List;
 @WebServlet(urlPatterns = {"/delete"})
 public class DeleteProductController extends HttpServlet {
     private final Logger logger = Logger.getLogger(DeleteProductController.class);
-    private final List<Product> products = new ArrayList<>();
-
-    private final ProductsRepository<Product> modelProductRepository
-            = new ProductAPIRepository(products);
-    private final ProductService<Product> modelProductService =
-            new ProductApiService(modelProductRepository);
+    private final ProductsRepository<Product> productRepository
+            = new ProductAPIRepository();
+    private final ProductService<Product> productService =
+            new ProductApiService(productRepository);
 
    private static final String PRODUCT_DELETE = "/pages/product/Delete_Product.jsp";
 
@@ -35,13 +33,10 @@ public class DeleteProductController extends HttpServlet {
         final Long id = Long.valueOf(req.getParameter("id"));
         final Product product = new Product(id);
         logger.info("DeleteProductController" + product);
-        modelProductService.delete(id);
-
+        productService.delete(id);
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher(PRODUCT_DELETE);
         requestDispatcher.forward(req,resp);
     }
-
-
-    }
+}
 

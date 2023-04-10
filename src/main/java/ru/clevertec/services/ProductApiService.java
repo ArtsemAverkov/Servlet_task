@@ -3,13 +3,10 @@ package ru.clevertec.services;
 import lombok.extern.slf4j.Slf4j;
 import ru.clevertec.entities.Product;
 import ru.clevertec.repositories.ProductsRepository;
-
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 
 @Slf4j
 public class ProductApiService implements ProductService<Product> {
@@ -25,17 +22,13 @@ public class ProductApiService implements ProductService<Product> {
     }
 
     @Override
-    public Object read(long id) {
-        Optional read = productRepository.read(id);
-        if (read.isEmpty()){
-            return read.get();
-        }
-        return null;
+    public Product read(long id) {
+        Object read = productRepository.read(id);
+        return (Product) read;
     }
 
-
     @Override
-    public List<Object> getCheck(List<Long> id, List<Long> amount, Long idDiscount, String discount) {
+    public List<Object> getCheck(List<Long> id, List<Long> amount, String discount) {
         List<Product> productList = getProducts(id, amount);
         List<String> sumCheck = new ArrayList<>();
         List<Object> objectList = new ArrayList<>();
@@ -47,7 +40,7 @@ public class ProductApiService implements ProductService<Product> {
                 .mapToDouble(f -> f).sum();
 
 
-        setDiscountInProduct(idDiscount, discount, productList, productConsumer);
+        setDiscountInProduct( discount, productList, productConsumer);
 
         double sumAfterDiscount = productList.stream()
                 .map(Product::getSum)
@@ -84,13 +77,13 @@ public class ProductApiService implements ProductService<Product> {
     }
 
     @Override
-    public List<Product> readAll() {
-        return productRepository.readAll(int page, int pageSize);
+    public List<Product> readAll(int page, int pageSize) {
+        return productRepository.readAll(page, pageSize);
     }
 
 
 
-    private void setDiscountInProduct(Long idDiscount, String discount, List<Product> productList, Consumer<Product> productConsumer) {
+    private void setDiscountInProduct( String discount, List<Product> productList, Consumer<Product> productConsumer) {
         productList.stream()
                 .filter(Product::isDiscount)
                 .collect(Collectors.toList());

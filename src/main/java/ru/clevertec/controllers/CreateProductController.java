@@ -22,12 +22,10 @@ import java.util.List;
 @WebServlet(urlPatterns = "/product/create")
 public class CreateProductController extends HttpServlet {
     private final Logger logger = Logger.getLogger(CreateProductController.class);
-    private final List<Product> products = new ArrayList<>();
-
-   private final ProductsRepository<Product> modelProductRepository
-        = new ProductAPIRepository(products);
-   private final ProductService<Product> modelProductService =
-           new ProductApiService(modelProductRepository);
+    private final ProductsRepository<Product> productRepository
+            = new ProductAPIRepository();
+    private final ProductService<Product> productService =
+            new ProductApiService(productRepository);
 
     private static final String PRODUCT_LIST_PATH = "/pages/product/Create_Product.jsp";
 
@@ -40,11 +38,9 @@ public class CreateProductController extends HttpServlet {
         final Product product = new Product(name ,price, amount, isDiscount);
 
         logger.info("CreateProductController" + product);
-        modelProductService.create(product);
-
+        productService.create(product);
 
         final RequestDispatcher requestDispatcher = req.getRequestDispatcher(PRODUCT_LIST_PATH);
         requestDispatcher.forward(req, resp);
-
     }
 }

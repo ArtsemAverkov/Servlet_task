@@ -2,8 +2,6 @@ package ru.clevertec.entities;
 
 import lombok.*;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product{
@@ -68,7 +66,6 @@ public class Product{
     public boolean isDiscount() {
         return isDiscount;
     }
-
     public void setDiscount(boolean discount) {
         isDiscount = discount;
     }

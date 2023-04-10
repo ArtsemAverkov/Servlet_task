@@ -1,94 +1,106 @@
 package ru.clevertec.repositories;
 
+import ru.clevertec.connect.Connect;
+import ru.clevertec.connect.ConnectPostgresql;
 import ru.clevertec.entities.Product;
-import ru.clevertec.util.JPA;
-import ru.clevertec.util.JPAUtil;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ProductAPIRepository implements ProductsRepository<Product> {
-    JPA jpa;
 
-    public ProductAPIRepository(List<Product> jpa) {
-        this.jpa = new JPAUtil();
+    Connect getConnection;
+
+    public ProductAPIRepository() {
+        this.getConnection = new ConnectPostgresql();
     }
 
     @Override
     public boolean create(Product product) {
-        EntityManager entityManager = jpa.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Query query = entityManager.createQuery("create Product (name= :name " +
-                "and price = :price and amount= : amount and isDiscount= :isDiscount)");
-        query.setParameter("name", product.getName());
-        query.setParameter("price",product.getPrice());
-        query.setParameter("amount", product.getAmount());
-        query.setParameter("isDiscount", product.isDiscount());
-        transaction.commit();
-        return true;
+        try(Connection conn = getConnection.connect()){
+            PreparedStatement statement = conn.prepareStatement
+                    ("INSERT INTO Product (name, price, amount, isDiscount)VALUES (?,?,?,?)");
+            statement.setString(1, product.getName());
+            statement.setDouble(2, product.getPrice());
+            statement.setLong(3, product.getAmount());
+            statement.setBoolean(4,product.isDiscount());
+            return statement.execute();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
-    public Optional<List<Product>> read(long id) {
-        EntityManager entityManager = jpa.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Query query = entityManager.createQuery
-                ("select id from Product where id= :id");
-        query.setParameter("id", id);
-        List<Product> resultList = query.getResultList();
-        resultList.forEach(System.out::println);
-        Optional<List<Product>> resultListModelProduct = Optional.ofNullable(resultList);
-        transaction.commit();
-        return resultListModelProduct;
+    public Product read(long id) {
+    Product product = null;
+        try(Connection conn = getConnection.connect()){
+            PreparedStatement statement = conn.prepareStatement("SELECT * FROM Product WHERE id=?");
+            statement.setLong(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                double price = resultSet.getDouble("price");
+                Long amount = resultSet.getLong("amount");
+                boolean isDiscount = resultSet.getBoolean("isDiscount");
+                product = new Product(name, price, amount, isDiscount);
+            }
+            return product;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public boolean update (Product product, Long id) {
-        EntityManager entityManager = jpa.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Query query = entityManager.createQuery(
-                "update Product set name= :name and price= :price and amount= :amount where " +
-                "id = :id");
-        query.setParameter("id",id);
-        query.setParameter("name", product.getName());
-        query.setParameter("price", product.getPrice());
-        query.setParameter("amount", product.getAmount());
-        transaction.commit();
-        return true;
+        try (Connection conn = getConnection.connect()) {
+            PreparedStatement statement = conn.prepareStatement
+                    ("UPDATE Product SET name=?, price=?, amount=?, isDiscount=? WHERE id=?");
+            statement.setString(1, product.getName());
+            statement.setDouble(2, product.getPrice());
+            statement.setLong(3, product.getAmount());
+            statement.setBoolean(4, product.isDiscount());
+            statement.setLong(5, id);
+            return statement.execute();
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
     @Override
     public boolean delete(Long id) {
-        EntityManager entityManager = jpa.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Query query = entityManager.createQuery("delete Product where id= :id");
-        query.setParameter("id", id);
-        List queryResultList = query.getResultList();
-        queryResultList.forEach(System.out::println);
-        query.executeUpdate();
-        transaction.commit();
+        try(Connection conn = getConnection.connect()){
+            PreparedStatement statement = conn.prepareStatement("DELETE FROM Product WHERE id=?");
+            statement.setLong(1, id);
+            return statement.execute();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
     @Override
     public List<Product> readAll(int page, int pageSize) {
-        int offset = (page - 1) * pageSize;
-        EntityManager entityManager = jpa.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        Query query = entityManager.createQuery("SELECT * FROM Product LIMIT ?, ?");
-        query.setParameter(1, offset);
-        query.setParameter(2, pageSize);
-        List resultList = query.getResultList();
-        transaction.commit();
-        return resultList;
+        List<Product> products = new ArrayList<>();
+        try(Connection conn = getConnection.connect()){
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT*FROM Product LIMIT ?, ?");
+                while (resultSet.next()) {
+                    String name = resultSet.getString("name");
+                    double price = resultSet.getDouble("price");
+                    Long amount = resultSet.getLong("amount");
+                    boolean isDiscount = resultSet.getBoolean("isDiscount");
+                products.add(new Product(name, price, amount, isDiscount));
+                System.out.println(products);
+            }
+            return products;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
+
 

@@ -21,13 +21,10 @@ import java.util.List;
 @WebServlet(urlPatterns = {"/readAllProduct"})
 public class ReadAllProduct extends HttpServlet {
     private final Logger logger = Logger.getLogger(ReadAllProduct.class);
-    private final List<Product> products = new ArrayList<>();
-
-    private final ProductsRepository<Product> modelProductRepository
-            = new ProductAPIRepository(products);
-    private final ProductService<Product> modelProductService =
-            new ProductApiService(modelProductRepository);
-
+    private final ProductsRepository<Product> productRepository
+            = new ProductAPIRepository();
+    private final ProductService<Product> productService =
+            new ProductApiService(productRepository);
 
     public static final String PRODUCT_PAGE ="pages/product/List_product.jsp";
 
@@ -35,10 +32,9 @@ public class ReadAllProduct extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         final RequestDispatcher requestDispatcher = req.getRequestDispatcher(PRODUCT_PAGE);
-        List<Product> products = modelProductService.readAll(1, 20);
+        List<Product> products = productService.readAll(1, 20);
         logger.info("ReadAllProduct :" + products);
          req.setAttribute("product", products);
         requestDispatcher.forward(req,resp);
-
     }
 }

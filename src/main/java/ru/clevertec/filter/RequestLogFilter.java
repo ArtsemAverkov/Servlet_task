@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@WebFilter(urlPatterns = {"/user/*","/product/*"})
+@WebFilter(urlPatterns = "/product/*")
 public class RequestLogFilter implements Filter {
   private final Logger log = Logger.getLogger(RequestLogFilter.class);
     @Override
@@ -29,9 +29,6 @@ public class RequestLogFilter implements Filter {
         Map<String, ArrayList<String>> headers = getHeader(httpServletRequest);
         log.info(httpServletRequest.getRequestURI() + ": " + headers);
         chain.doFilter(httpServletRequest, httpServletResponse);
-
-
-
     }
 
     @Override
